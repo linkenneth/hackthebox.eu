@@ -1,0 +1,20 @@
+
+Starting Nmap 7.60 ( https://nmap.org ) at 2018-01-13 18:57 CST
+Nmap scan report for 10.10.10.48
+Host is up (2.2s latency).
+Not shown: 995 closed ports
+PORT     STATE    SERVICE
+22/tcp   open     ssh
+53/tcp   filtered domain
+80/tcp   open     http
+| http-enum: 
+|   /admin/: Possible admin folder
+|   /admin/index.php: Possible admin folder
+|   /javascript/sorttable.js: Secunia NSI
+|   /en/welcomeRes.js: VMWare
+|   /Citrix//AccessPlatform/auth/clientscripts/cookies.js: Citrix
+|_  /Citrix/AccessPlatform/auth/clientscripts/login.js: Citrix
+5901/tcp open     vnc-1
+6001/tcp open     X11:1
+
+Nmap done: 1 IP address (1 host up) scanned in 518.27 seconds

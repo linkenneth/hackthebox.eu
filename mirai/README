@@ -1,0 +1,71 @@
+========
+= User =
+========
+
+-- Scan reveals VNC, X11, SSH, and hidden admin folders (nmap enumerate)
+-- Turns out after some refreshed only SSH, DNS, and HTTP were open ports.
+-- Hint on the forum suggested looking at OS distribution and version (as well
+   as possible SSH version) for vulnerabilities. CVE-2016-1908 looks promising.
+-- After so much fucking research it turns out since this is running on
+   Raspberry Pi, the default Raspberry Pi password wasn't changed. WTF
+
+========
+= Root =
+========
+
+-- Basic info gathering:
+
+uname -a
+Linux raspberrypi 3.16.0-4-686-pae #1 SMP Debian 3.16.36-1+deb8u2 (2016-10-19) i686 GNU/Linux
+
+-- If default pi user's password isn't changed, what about root? ... it works. However,
+
+cat root.txt
+I lost my original root.txt! I think I may have a backup on my USB stick...
+
+-- Searching for USB stick:
+
+df -h
+Filesystem      Size  Used Avail Use% Mounted on
+aufs            8.5G  2.8G  5.3G  34% /
+tmpfs           101M  4.8M   96M   5% /run
+/dev/sda1       1.3G  1.3G     0 100% /lib/live/mount/persistence/sda1
+/dev/loop0      1.3G  1.3G     0 100% /lib/live/mount/rootfs/filesystem.squashfs
+tmpfs           251M     0  251M   0% /lib/live/mount/overlay
+/dev/sda2       8.5G  2.8G  5.3G  34% /lib/live/mount/persistence/sda2
+devtmpfs         10M     0   10M   0% /dev
+tmpfs           251M  8.0K  251M   1% /dev/shm
+tmpfs           5.0M  4.0K  5.0M   1% /run/lock
+tmpfs           251M     0  251M   0% /sys/fs/cgroup
+tmpfs           251M  8.0K  251M   1% /tmp
+tmpfs            51M     0   51M   0% /run/user/999
+tmpfs            51M     0   51M   0% /run/user/1000
+/dev/sdb        8.7M   93K  7.9M   2% /media/usbstick
+
+root@raspberrypi:/media/usbstick# ls -al
+total 18
+drwxr-xr-x 3 root root  1024 Aug 14 05:27 .
+drwxr-xr-x 3 root root  4096 Jan 14 13:59 ..
+-rw-r--r-- 1 root root   129 Aug 14 05:19 damnit.txt
+drwx------ 2 root root 12288 Aug 14 05:15 lost+found
+
+root@raspberrypi:/media/usbstick# cat damnit.txt
+Damnit! Sorry man I accidentally deleted your files off the USB stick.
+Do you know if there is any way to get them back?
+
+-James
+
+-- basic fsck doesn't work. lost+found is empty. Let's try some advanced tools:
+
+root@raspberrypi:~# file -sL /dev/sdb
+/dev/sdb: Linux rev 1.0 ext4 filesystem data, UUID=635bcd7f-1d95-4229-bf13-3e722026db3c (extents) (huge files)
+
+-- This shows ext4 file system. Attempt to use extundelete (uploaded):
+
+ext2fs missing.
+
+-- I was finally able to recover the file by directly grepping the /dev/sdb
+   device and looking through raw output for suspicious text. The USB is only
+   8.7 MB large so I basically downloaded the entire image and grepped it.
+-- Deleted raw-grep.txt because too large and too little data.
+

@@ -1,0 +1,2 @@
+Assuming the OS is: linux
+ERROR: Dependend program 'strings' is mising.  Can't run.  Sorry!
